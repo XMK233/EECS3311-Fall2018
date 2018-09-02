@@ -34,8 +34,9 @@ feature ------------------------------------------------------------------------
 			size_unchanged:  -- Your task  --done
 				imp.count = (old imp.twin).count
 			result_correct:  -- Your task  --done
-				(not (i < imp.lower)) and (not (i > imp.upper))
-			no_elements_changed: -- Your task --done
+				--(not (i < imp.lower)) and (not (i > imp.upper))
+				not (i < imp.lower or i > imp.upper)
+			no_elements_changed: -- Your task --done --problematic
 				across
 					1 |..| imp.count as j
 				all
@@ -46,14 +47,21 @@ feature ------------------------------------------------------------------------
 	get_at (i: INTEGER): STRING
 			-- Return the element stored at index 'i'.
 		require
-			valid_index: -- Your task
+			valid_index: -- Your task --done -- problematic
+				valid_index(i)
 		do
-			-- Your task
-			Result := ""
+			-- Your task --done
+			Result := imp.item (i)
 		ensure
-			size_unchanged: True -- Your task
-			result_correct: True -- Your task
-			no_elements_changed: True -- Your task
+			size_unchanged:  -- Your task --done
+				imp.count = (old imp.twin).count
+			result_correct: True -- Your task -- unknown
+			no_elements_changed:  -- Your task --done
+				across
+					1 |..| imp.count as j
+				all
+					j.item = j.item implies imp [j.item] ~ (old imp.twin) [j.item]
+				end
 		end
 
 feature ---------------------------------------------------------------- Constructors

@@ -18,6 +18,8 @@ feature -- Collect all tests for ARRAY_CONTAINER
 			add_boolean_case (agent test_make)
 			add_boolean_case (agent test_count)
 			add_boolean_case (agent test_valid_index)
+			add_violation_case_with_tag ("valid_index", agent test_get_at_precondition_violation)
+			add_boolean_case (agent test_get_at)
 --			add_boolean_case (agent test_account_creation)
 --			add_violation_case_with_tag ("not_too_big", agent test_account_withdraw_precondition_not_too_weak)
 		end
@@ -68,6 +70,35 @@ feature -- Test cases for ACCOUNT
 						arr.valid_index (4) and
 					   (not arr.valid_index (5))
 			check Result end
+		end
+
+	test_get_at : BOOLEAN
+		local
+			arr : ARRAYED_CONTAINER
+			s : STRING
+		do
+			comment("test get_at feature")
+
+			create arr.make
+			arr.insert_last ("s1")
+			arr.insert_last ("s2")
+			arr.insert_last ("s3")
+			s := arr.get_at (1)
+			Result := s ~ "s2"
+			check Result end
+		end
+
+	test_get_at_precondition_violation
+		local
+			arr : ARRAYED_CONTAINER
+			s : STRING
+		do
+			comment("let's violate the precondition of get_at")
+
+			create arr.make
+			arr.insert_last ("s1")
+			arr.insert_last ("s2")
+			s := arr.get_at (0)
 		end
 
 --	test_account_creation: BOOLEAN -- "return type"
