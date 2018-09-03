@@ -16,12 +16,25 @@ feature -- Collect all tests for ARRAY_CONTAINER
 		-- Add test cases for account
 		do
 			add_boolean_case (agent test_make)
+
 			add_boolean_case (agent test_count)
+
 			add_boolean_case (agent test_valid_index)
 			add_violation_case_with_tag ("valid_index", agent test_get_at_precondition_violation)
+
 			add_boolean_case (agent test_get_at)
---			add_boolean_case (agent test_account_creation)
---			add_violation_case_with_tag ("not_too_big", agent test_account_withdraw_precondition_not_too_weak)
+
+			add_boolean_case (agent test_assign_at)
+			add_violation_case_with_tag ("others_unchanged", agent test_assign_at_postcondition_violation)
+
+			add_boolean_case (agent test_insert_at)
+
+			add_boolean_case (agent test_delete_at)
+
+			add_boolean_case (agent test_insert_last)
+
+			add_boolean_case (agent test_remove_first)
+
 		end
 ----
 feature -- Test cases for ACCOUNT
@@ -70,6 +83,15 @@ feature -- Test cases for ACCOUNT
 						arr.valid_index (4) and
 					   (not arr.valid_index (5))
 			check Result end
+
+			Result := arr.count = 4
+			check Result end
+
+			Result := (arr.get_at (1) ~ "s1") and
+						(arr.get_at (2) ~ "s2") and
+						(arr.get_at (3) ~ "s3") and
+						(arr.get_at (4) ~ "s4")
+			check Result end
 		end
 
 	test_get_at : BOOLEAN
@@ -84,7 +106,16 @@ feature -- Test cases for ACCOUNT
 			arr.insert_last ("s2")
 			arr.insert_last ("s3")
 			s := arr.get_at (1)
+
 			Result := s ~ "s2"
+			check Result end
+
+			Result := arr.count = 3
+			check Result end
+
+			Result := (arr.get_at (1) ~ "s1") and
+						(arr.get_at (2) ~ "s2") and
+						(arr.get_at (3) ~ "s3")
 			check Result end
 		end
 
@@ -99,6 +130,136 @@ feature -- Test cases for ACCOUNT
 			arr.insert_last ("s1")
 			arr.insert_last ("s2")
 			s := arr.get_at (0)
+		end
+
+	test_assign_at: BOOLEAN
+		local
+			arr : ARRAYED_CONTAINER
+		do
+			comment ("test assign_at")
+
+			create arr.make
+			arr.insert_last ("s1")
+			arr.insert_last ("s2")
+			arr.assign_at (1, "sx")
+
+			Result := arr.get_at (1) ~ "sx"
+			check Result end
+
+			Result := arr.count = 2
+			check Result end
+
+			Result := arr.get_at (2) ~ "s2"
+			check Result end
+		end
+
+	test_assign_at_postcondition_violation
+		local
+			arr : ARRAYED_CONTAINER
+		do
+			comment ("let's violate the post condition of others_unchanged")
+
+			create arr.make
+			arr.insert_last ("s1")
+			arr.insert_last ("s2")
+
+			arr.assign_at (2, "s3")
+		end
+
+	test_insert_at: BOOLEAN
+		local
+			arr : ARRAYED_CONTAINER
+		do
+			comment ("test insert_at")
+
+			create arr.make
+			arr.insert_last ("s1")
+			arr.insert_last ("s2")
+			arr.insert_last ("s3")
+			arr.insert_last ("s4")
+			arr.insert_at (3, "sx")
+
+			Result := arr.get_at (3) ~ "sx"
+			check Result end
+
+			Result := arr.count = 5
+			check Result end
+
+			Result := (arr.get_at (1) ~ "s1") and
+						(arr.get_at (2) ~ "s2") and
+						(arr.get_at (4) ~ "s3") and
+						(arr.get_at (5) ~ "s4")
+			check Result end
+		end
+
+	test_delete_at: BOOLEAN
+		local
+			arr : ARRAYED_CONTAINER
+		do
+			comment ("test delete_at")
+
+			create arr.make
+			arr.insert_last ("s1")
+			arr.insert_last ("s2")
+			arr.insert_last ("s3")
+			arr.insert_last ("s4")
+			arr.insert_last ("s5")
+			arr.delete_at (3)
+
+			Result := arr.get_at (3) ~ "s4"
+			check Result end
+
+			Result := arr.count = 4
+			check Result end
+
+			Result := (arr.get_at (1) ~ "s1") and
+						(arr.get_at (2) ~ "s2") and
+						(arr.get_at (3) ~ "s4") and
+						(arr.get_at (4) ~ "s5")
+			check Result end
+		end
+
+	test_insert_last: BOOLEAN
+		local
+			arr : ARRAYED_CONTAINER
+		do
+			comment ("test insert_last")
+
+			create arr.make
+			arr.insert_last ("s1")
+			arr.insert_last ("s2")
+
+			arr.insert_last ("s3")
+
+			Result := arr.count = 3
+			check Result end
+
+			Result := arr.get_at (3) ~ "s3"
+			check Result end
+
+			Result := (arr.get_at (1) ~ "s1") and
+						(arr.get_at (2) ~ "s2")
+			check Result end
+		end
+
+	test_remove_first: BOOLEAN
+		local
+			arr : ARRAYED_CONTAINER
+		do
+			comment ("test remove_first")
+
+			create arr.make
+			arr.insert_last ("s1")
+			arr.insert_last ("s2")
+			arr.insert_last ("s3")
+			arr.remove_first
+
+			Result := arr.count = 2
+			check Result end
+
+			Result := (arr.get_at (1) ~ "s2") and
+						(arr.get_at (2) ~ "s3")
+			check Result end
 		end
 
 --	test_account_creation: BOOLEAN -- "return type"
