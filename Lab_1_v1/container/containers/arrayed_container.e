@@ -55,7 +55,8 @@ feature ------------------------------------------------------------------------
 		ensure
 			size_unchanged:  -- Your task --done
 				imp.count = (old imp.twin).count
-			result_correct: True-- Your task -- unknown
+			result_correct: -- Your task -- done -- problematic
+				Result = imp.item (i)
 			no_elements_changed:  -- Your task --done
 				across
 					1 |..| imp.count as j
