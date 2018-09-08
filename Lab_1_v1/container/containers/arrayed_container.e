@@ -34,8 +34,7 @@ feature ------------------------------------------------------------------------
 			size_unchanged:  -- Your task  --done
 				imp.count = (old imp.twin).count
 			result_correct:  -- Your task  --done -- problematic
-				--(not (i < imp.lower)) and (not (i > imp.upper))
-				not (i < imp.lower or i > imp.upper)
+				Result = not (i < imp.lower or i > imp.upper)
 			no_elements_changed: -- Your task --done --problematic
 				across
 					1 |..| imp.count as j
@@ -56,7 +55,7 @@ feature ------------------------------------------------------------------------
 			size_unchanged:  -- Your task --done
 				imp.count = (old imp.twin).count
 			result_correct: -- Your task -- done -- problematic
-				Result = imp.item (i)
+				Result ~ imp.item (i)
 			no_elements_changed:  -- Your task --done
 				across
 					1 |..| imp.count as j
@@ -107,9 +106,21 @@ feature ----------------------------------------------------------- Commands
 		require
 			valid_index: -- Your task -- done
 				valid_index(i)
+
+		local
+			k : INTEGER
 		do
 			-- Your task --done
-			imp.force(s, i)
+			from
+				imp.force("xxxx", imp.count + 1)
+				k := imp.count
+			until
+				k = i
+			loop
+				imp[k] := imp[k - 1]
+				k := k - 1
+			end
+			imp[i] := s
 		ensure
 			size_changed:  -- Your task --done
 				imp.count = (old imp.twin).count + 1
@@ -136,17 +147,19 @@ feature ----------------------------------------------------------- Commands
 				valid_index(i)
 		local
 			k : INTEGER
-			arr : ARRAY[STRING]
+			rear : ARRAY[STRING]
 		do
-			-- Your task -- done
 			from
-				arr := imp.twin
 				k := i
 			until
 				k = imp.count
 			loop
-				imp[k] := arr[k + 1]
+				imp[k] := imp[k + 1]
+				k := k + 1
 			end
+			imp.remove_tail (1)
+			-- Your task -- done
+
 
 		ensure
 			size_changed:  -- Your task -- done
@@ -188,9 +201,19 @@ feature ----------------------------------------------------------- Commands
 		require
 			not_empty: -- Your task --done --problematic
 				count > 0
+		local
+			k : INTEGER
 		do
 			-- Your task --done
-			imp.remove_head (1)
+			from
+				k := 1
+			until
+				k = imp.count
+			loop
+				imp[k] := imp[k + 1]
+				k := k + 1
+			end
+			imp.remove_tail (1)
 		ensure
 			size_changed: -- Your task --done
 				imp.count = (old imp.twin).count - 1

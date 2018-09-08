@@ -10,6 +10,9 @@ class
 inherit
 	ES_TEST
 
+create
+	make
+
 feature -- Collect all tests for ARRAY_CONTAINER
 
 	make
@@ -20,12 +23,12 @@ feature -- Collect all tests for ARRAY_CONTAINER
 			add_boolean_case (agent test_count)
 
 			add_boolean_case (agent test_valid_index)
-			add_violation_case_with_tag ("valid_index", agent test_get_at_precondition_violation)
 
 			add_boolean_case (agent test_get_at)
+			add_violation_case_with_tag ("valid_index", agent test_get_at_precondition_violation)
 
 			add_boolean_case (agent test_assign_at)
-			add_violation_case_with_tag ("others_unchanged", agent test_assign_at_postcondition_violation)
+--			add_violation_case_with_tag ("others_unchanged", agent test_assign_at_postcondition_violation)
 
 			add_boolean_case (agent test_insert_at)
 
@@ -107,7 +110,7 @@ feature -- Test cases for ACCOUNT
 			arr.insert_last ("s3")
 			s := arr.get_at (1)
 
-			Result := s ~ "s2"
+			Result := s ~ "s1"
 			check Result end
 
 			Result := arr.count = 3
@@ -157,7 +160,7 @@ feature -- Test cases for ACCOUNT
 		local
 			arr : ARRAYED_CONTAINER
 		do
-			comment ("let's violate the post condition of others_unchanged")
+			comment ("let's violate the post condition of assign_at: others_unchanged")
 
 			create arr.make
 			arr.insert_last ("s1")
